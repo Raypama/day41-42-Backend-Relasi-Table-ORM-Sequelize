@@ -1,12 +1,11 @@
-// controllers/user.controller.js
 const userService = require("../services/user.service");
 const { successResponse, errorResponse } = require("../utils/response");
 
 module.exports = {
   getAllUsers: async (req, res) => {
     try {
-      const users = await userService.getAllUsers();
-      return successResponse(res, 200, "Success get users", users);
+      const users = await userService.getAll();
+      return successResponse(res, 200, "Users retrieved", users);
     } catch (error) {
       return errorResponse(res, 500, error.message);
     }
@@ -14,53 +13,39 @@ module.exports = {
 
   getUserById: async (req, res) => {
     try {
-      const { id } = req.params;
-      const user = await userService.getUserById(id);
-
-      if (!user) return errorResponse(res, 404, "User not found");
-
-      return successResponse(res, 200, "Success get user", user);
+      const user = await userService.getById(req.params.id);
+      return successResponse(res, 200, "User retrieved", user);
     } catch (error) {
-      return errorResponse(res, 500, error.message);
+      return errorResponse(res, 404, error.message);
     }
   },
 
   createUser: async (req, res) => {
     try {
-      const data = req.body;
-      const user = await userService.createUser(data);
-
+      const user = await userService.create(req.body);
       return successResponse(res, 201, "User created", user);
     } catch (error) {
-      return errorResponse(res, 500, error.message);
+      return errorResponse(res, 400, error.message);
     }
   },
 
   updateUser: async (req, res) => {
     try {
-      const { id } = req.params;
-      const data = req.body;
-
-      const updated = await userService.updateUser(id, data);
-
-      if (!updated) return errorResponse(res, 404, "User not found");
-
-      return successResponse(res, 200, "User updated", updated);
+      const user = await userService.update(req.params.id, req.body);
+      return successResponse(res, 200, "User updated", user);
     } catch (error) {
-      return errorResponse(res, 500, error.message);
+      return errorResponse(res, 400, error.message);
     }
   },
 
   deleteUser: async (req, res) => {
+    const id = req.params.id;
+
     try {
-      const { id } = req.params;
-      const deleted = await userService.deleteUser(id);
-
-      if (!deleted) return errorResponse(res, 404, "User not found");
-
-      return successResponse(res, 200, "User deleted");
+      await userService.delete(id);
+      return successResponse(res, 200, `User ${id} deleted succesfull`);
     } catch (error) {
-      return errorResponse(res, 500, error.message);
+      return errorResponse(res, 400, error.message);
     }
   },
 };

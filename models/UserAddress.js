@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: "user_addresses",
-      timestamps: true,
+      timestamps: false,//sementara karena relasi belum ada
       underscored: true,
     }
   );

@@ -1,19 +1,22 @@
+const jwt = require("jsonwebtoken");
+const { errorResponse } = require("../utils/response");
 
-// backend/middlewares/auth.js
+module.exports = (req, res, next) => {
+  try {
+    const header = req.headers.authorization;
 
-exports.requireAuth = (req, res, next) => {
-  // Dummy auth (belum pakai JWT)
-  const token = req.headers.authorization;
+    if (!header || !header.startsWith("Bearer ")) {
+      return errorResponse(res, 401, "No token provided");
+    }
 
-  if (!token) {
-    return res.status(401).json({
-      status: "error",
-      message: "Unauthorized. Token is required.",
-    });
+    const token = header.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = decoded;
+
+    next();
+  } catch (error) {
+    return errorResponse(res, 401, "Invalid or expired token");
   }
-
-  // Kamu bisa decode token disini nanti
-  req.user = { id: 1, full_name: "Dummy Auth User" };
-
-  next();
 };

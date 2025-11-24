@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     "User",
     {
       id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-      full_name: { type: DataTypes.STRING(150), allowNull: false },
+      full_name: { type: DataTypes.STRING(150), allowNull: true },
       nickname: { type: DataTypes.STRING(100), allowNull: false, unique: true },
       email: { type: DataTypes.STRING(150), allowNull: false, unique: true, validate: { isEmail: true } },
       password: { type: DataTypes.STRING(255), allowNull: false },

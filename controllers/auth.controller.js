@@ -1,34 +1,25 @@
-exports.register = async (req, res) => {
-  const { full_name, email, password } = req.body;
+const authService = require("../services/auth.service");
+const { successResponse, errorResponse } = require("../utils/response");
 
-  // ini hanya dummy (belum simpan ke database)
-  res.json({
-    status: "success",
-    message: "REGISTER endpoint working",
-    data: { full_name, email },
-  });
-};
+module.exports = {
+  login: async (req, res) => {
+    try {
+      const { email, password } = req.body;
 
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
+      const result = await authService.login(email, password);
 
-  // ini hanya dummy (belum validasi database)
-  res.json({
-    status: "success",
-    message: "LOGIN endpoint working",
-    data: { email },
-  });
-};
+      return successResponse(res, 200, "Login success", result);
+    } catch (error) {
+      return errorResponse(res, 400, error.message);
+    }
+  },
 
-exports.me = async (req, res) => {
-  // ini dummy USER DATA
-  res.json({
-    status: "success",
-    message: "GET authenticated user (dummy)",
-    data: {
-      id: 1,
-      full_name: "Dummy User",
-      email: "dummy@example.com",
-    },
-  });
+  check: async (req, res) => {
+    try {
+      const result = await authService.checkToken(req.user.id);
+      return successResponse(res, 200, "Token valid", result);
+    } catch (error) {
+      return errorResponse(res, 401, error.message);
+    }
+  },
 };
